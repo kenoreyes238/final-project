@@ -42,24 +42,59 @@ function clearGame() {
     document.getElementById('8').innerHTML = '';
 }
 
+//returns empty cells
+function bestSpot() {
+    return options;
+}
+
 //place a marker when player clicks on grid cell / input
 function markOnClick(square) {
-    turn(square.target.id, player);
+    if(typeof gridBoard[square.target.id] == 'number') {
+        turn(square.target.id, player);
+        if(!checkTie()) turn(bestSpot(), computer);
+    } 
 }
 
 function turn(squareId, player){
     gridBoard[squareId] = player;
     document.getElementById(squareId).innerText = player;
-    let gameWon = determineResults(gridBoard, player);
+    let gameWon = checkWinner(gridBoard, player);
 }
 
-//computer places a marker on random, unoccupied cell
-function markFromComp() {
-    // logic things
-    turn(square.target.id, computer);
+//determine if player wins
+function checkWinner(gameWon) {
+    let gameWon = false;
+
+    for(let i = 0; i < winCombos.length; i++) {
+        const condition = winCombos[i];
+        const cellA = options[condition[0]];
+        const cellB = options[condition[1]];
+        const cellC = options[condition[2]];
+
+        if(cellA == '' || cellB == '' || cellC == '') {
+            continue;
+        }
+        if(cellA == cellB && cellB == cellC) {
+            gameWon = true;
+            break;
+        }
+    }
+    declareWinner(gameWon.player == player ? "YOU WIN" : "YOU LOST");
 }
 
-//determine if player wins, loses, or the game is a draw
-function determineResults() {
-    
+//checks if there's a tie
+function checkTie() {
+    if(options.length == 0) {
+        for(let i = 0; i < cells.length; i++) {
+            cells[i].removeEventListener('click', markOnClick, false);
+        }
+        declareWinner('Draw');
+        return true;
+    }
+    return false;
+}
+
+//display
+function declareWinner() {
+    document.querySelector('.endgame').style.display = 'block';
 }
