@@ -12,11 +12,10 @@ const winCombos = [
 
 var gridBoard;
 let restartBtn = document.querySelector('#btn');
-let cells = document.querySelectorAll('.cell');
-let options = ['','','','','','','','',''];
-let running = false;
+const cells = document.querySelectorAll('.cell');
 const player = 'X'; //player
 const computer = 'O'; //computer/ AI
+let options = ['', '', '', '', '', '', '', '', ''];
 
 startGame();
 
@@ -26,7 +25,17 @@ function startGame() {
     restartBtn.addEventListener('click', clearGame);
     document.querySelector('.endgame').style.display = 'none';
     gridBoard = Array.from(Array(9).keys());
-    running = true;
+}
+
+//display
+function declareWinner(outcome) {
+    const endgameOverlay = document.querySelector('.endgame');
+    endgameOverlay.style.display = 'block';
+    endgameOverlay.innerText = outcome;
+
+    setTimeout(() => {
+        endgameOverlay.style.display = 'none';
+    }, 2000);
 }
 
 //clear/ restart game
@@ -44,57 +53,72 @@ function clearGame() {
 
 //returns empty cells
 function bestSpot() {
-    return options;
+    const emptyCells = options.reduce((acc, value, index) => {
+        if (value === '') {
+            acc.push(index);
+        }
+        return acc;
+    }, []);
+
+    // Choose a random empty cell for the computer's move
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    return emptyCells[randomIndex];
 }
 
 //place a marker when player clicks on grid cell / input
 function markOnClick(square) {
-    if(typeof gridBoard[square.target.id] == 'number') {
+    if (typeof gridBoard[square.target.id] == 'number') {
+        // Update the internal game state
         turn(square.target.id, player);
-        if(!checkTie()) turn(bestSpot(), computer);
-    } 
+
+        // Check for a tie before the computer's move
+        if (!checkTie()) {
+            // Trigger the computer's move after a brief delay
+            setTimeout(() => {
+                // Update the internal game state for the computer's move
+                turn(bestSpot(), computer);
+                checkTie();
+            }, 500); // Adjust the delay time (in milliseconds) as needed
+        }
+    }
 }
 
-function turn(squareId, player){
-    gridBoard[squareId] = player;
-    document.getElementById(squareId).innerText = player;
-    let gameWon = checkWinner(gridBoard, player);
+function turn(squareId, currentPlayer) {
+    // Update the internal game state
+    gridBoard[squareId] = currentPlayer;
+
+    // Update the displayed markings
+    document.getElementById(squareId).innerText = currentPlayer;
+
+    if (checkWinner(gridBoard, currentPlayer)) {
+        declareWinner(currentPlayer == player ? "YOU WIN" : "YOU LOST");
+    }
 }
 
 //determine if player wins
-function checkWinner(gameWon) {
-    let gameWon = false;
-
-    for(let i = 0; i < winCombos.length; i++) {
+function checkWinner(gameBoard, currentPlayer) {
+    for (let i = 0; i < winCombos.length; i++) {
         const condition = winCombos[i];
-        const cellA = options[condition[0]];
-        const cellB = options[condition[1]];
-        const cellC = options[condition[2]];
+        const cellA = gameBoard[condition[0]];
+        const cellB = gameBoard[condition[1]];
+        const cellC = gameBoard[condition[2]];
 
-        if(cellA == '' || cellB == '' || cellC == '') {
+        if (cellA == '' || cellB == '' || cellC == '') {
             continue;
         }
-        if(cellA == cellB && cellB == cellC) {
-            gameWon = true;
-            break;
+        if (cellA == cellB && cellB == cellC) {
+            return true;
         }
-    }
-    declareWinner(gameWon.player == player ? "YOU WIN" : "YOU LOST");
-}
-
-//checks if there's a tie
-function checkTie() {
-    if(options.length == 0) {
-        for(let i = 0; i < cells.length; i++) {
-            cells[i].removeEventListener('click', markOnClick, false);
-        }
-        declareWinner('Draw');
-        return true;
     }
     return false;
 }
 
-//display
-function declareWinner() {
-    document.querySelector('.endgame').style.display = 'block';
+//checks if there's a tie
+function checkTie() {
+    if (options.every(cell => cell !== '')) {
+        cells.forEach(cell => cell.removeEventListener('click', markOnClick, false));
+        declareWinner('Draw');
+        return true;
+    }
+    return false;
 }
