@@ -1,4 +1,10 @@
-//make winning combos in an array
+//variables
+var gridBoard;
+let restartBtn = document.querySelector('#btn');
+const cells = document.querySelectorAll('.cell');
+const player = 'X'; //player
+const computer = 'O'; //computer/ AI
+let options = ['', '', '', '', '', '', '', '', ''];
 const winCombos = [
     [0, 3, 6], //vertical first column
     [1, 4, 7], //vertical second column
@@ -10,13 +16,6 @@ const winCombos = [
     [2, 4, 6], //diagonal from bottom left to top right
 ];
 
-var gridBoard;
-let restartBtn = document.querySelector('#btn');
-const cells = document.querySelectorAll('.cell');
-const player = 'X'; //player
-const computer = 'O'; //computer/ AI
-let options = ['', '', '', '', '', '', '', '', ''];
-
 startGame();
 
 //start game
@@ -27,28 +26,16 @@ function startGame() {
     gridBoard = Array.from(Array(9).keys());
 }
 
-//display
-function declareWinner(outcome) {
-    const endgameOverlay = document.querySelector('.endgame');
-    endgameOverlay.style.display = 'block';
-    endgameOverlay.innerText = outcome;
-
-    setTimeout(() => {
-        endgameOverlay.style.display = 'none';
-    }, 2000);
-}
-
 //clear/ restart game
 function clearGame() {
-    document.getElementById('0').innerHTML = '';
-    document.getElementById('1').innerHTML = '';
-    document.getElementById('2').innerHTML = '';
-    document.getElementById('3').innerHTML = '';
-    document.getElementById('4').innerHTML = '';
-    document.getElementById('5').innerHTML = '';
-    document.getElementById('6').innerHTML = '';
-    document.getElementById('7').innerHTML = '';
-    document.getElementById('8').innerHTML = '';
+    gridBoard = Array.from(Array(9).keys());
+    options = ['', '', '', '', '', '', '', '', ''];
+
+    cells.forEach(cell => {
+        cell.innerText = '';
+    });
+
+    cells.forEach(cell => cell.addEventListener('click', markOnClick));
 }
 
 //returns empty cells
@@ -60,42 +47,44 @@ function bestSpot() {
         return acc;
     }, []);
 
-    // Choose a random empty cell for the computer's move
     const randomIndex = Math.floor(Math.random() * emptyCells.length);
     return emptyCells[randomIndex];
 }
 
-//place a marker when player clicks on grid cell / input
 function markOnClick(square) {
-    if (typeof gridBoard[square.target.id] == 'number') {
-        // Update the internal game state
-        turn(square.target.id, player);
+    const clickedCellId = square.target.id;
 
-        // Check for a tie before the computer's move
-        if (!checkTie()) {
-            // Trigger the computer's move after a brief delay
-            setTimeout(() => {
-                // Update the internal game state for the computer's move
-                turn(bestSpot(), computer);
-                checkTie();
-            }, 500); // Adjust the delay time (in milliseconds) as needed
-        }
+    if (!isGameActive() || typeof gridBoard[clickedCellId] !== 'number') {
+        return;
+    }
+
+    turn(clickedCellId, player);
+
+    // Check for a tie before the computer's move
+    if (!checkTie() && isGameActive()) {
+        setTimeout(() => {
+            const computerMove = bestSpot();
+            turn(computerMove, computer);
+            checkTie();
+        }, 500);
     }
 }
 
 function turn(squareId, currentPlayer) {
-    // Update the internal game state
+    if (options[squareId] !== '') {
+        return;
+    }
+
     gridBoard[squareId] = currentPlayer;
 
-    // Update the displayed markings
     document.getElementById(squareId).innerText = currentPlayer;
+    options[squareId] = currentPlayer;
 
     if (checkWinner(gridBoard, currentPlayer)) {
         declareWinner(currentPlayer == player ? "YOU WIN" : "YOU LOST");
     }
 }
 
-//determine if player wins
 function checkWinner(gameBoard, currentPlayer) {
     for (let i = 0; i < winCombos.length; i++) {
         const condition = winCombos[i];
@@ -113,12 +102,31 @@ function checkWinner(gameBoard, currentPlayer) {
     return false;
 }
 
-//checks if there's a tie
+function declareWinner(outcome, currentPlayer, computer) {
+    const endgameOverlay = document.querySelector('.endgame');
+    endgameOverlay.style.display = 'block';
+    endgameOverlay.innerText = outcome;
+    endgameOverlay.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+    
+    //background for endgame got too lazy tbh
+    // if (checkTie()) {
+    //     endgameOverlay.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+    // } else if (checkWinner(gridBoard, currentPlayer)) {
+    //     endgameOverlay.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+    // } else if (checkWinner(gridBoard, computer)) {
+    //     endgameOverlay.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+    // }
+}
+
 function checkTie() {
     if (options.every(cell => cell !== '')) {
         cells.forEach(cell => cell.removeEventListener('click', markOnClick, false));
-        declareWinner('Draw');
+        declareWinner('DRAW');
         return true;
     }
     return false;
+}
+
+function isGameActive() {
+    return !checkWinner(gridBoard, player) && !checkWinner(gridBoard, computer) && !checkTie();
 }

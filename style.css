@@ -1,4 +1,10 @@
 /*tic tac toe grid*/
+body {
+    background-color: #1b263b;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: #e0e1dd;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -7,12 +13,13 @@
 }
 
 td {
-    border: 2px solid #333;
+    border: 2px solid #e0e1dd;
     height: 100px;
     width: 100px;
     text-align: center;
     vertical-align: middle;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: #e0e1dd;
     font-size: 50px;
     cursor: pointer;
 }
@@ -22,26 +29,9 @@ table {
     position: absolute;
     left: 50%;
     margin-left: -155px;
-    top: 50px;
+    top: 100px;
 }
 
-table tr:first-child td {
-    border-top: 0;
-}
-
-table tr:last-child td {
-    border-bottom: 0;
-}
-
-table td:first-child {
-    border-left: 0;
-}
-
-table td:last-child {
-    border-right: 0;
-}
-
-/*restart button*/
 #btn {
     display: block;
     margin: 1em auto;
@@ -52,21 +42,23 @@ table td:last-child {
     border-radius: 10px;
     min-width: 125px;
     position: absolute;
-    bottom: 30%;
+    top: 450px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .endgame {
     display: none;
-    width: 200px;
-    top: 120px;
-    background-color: rgba(205, 133, 63, 0.8);
+    width: 500px;
+    height: 310px;
+    top: 50px;
     position: absolute;
     left: 50%;
-    margin-left: -100px;
+    margin-left: -250px;
     padding-top: 50px;
     padding-bottom: 50px;
     text-align: center;
-    border-radius: 5px;
-    color: white;
+    border-radius: 1px;
+    color: rgb(255, 255, 255);
     font-size: 2em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
