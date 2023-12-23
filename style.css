@@ -1,8 +1,8 @@
-/*tic tac toe grid*/
 body {
     background-color: #1b263b;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: #e0e1dd;
+    margin: 0;
 }
 
 .container {
@@ -10,6 +10,27 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+#scoreboard {
+    margin-bottom: 20px;
+}
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100px;
+    margin-top: 20px;
+    border: 5px;
+    border-color: white;
 }
 
 td {
@@ -18,7 +39,7 @@ td {
     width: 100px;
     text-align: center;
     vertical-align: middle;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: #e0e1dd;
     font-size: 50px;
     cursor: pointer;
@@ -26,10 +47,8 @@ td {
 
 table {
     border-collapse: collapse;
-    position: absolute;
-    left: 50%;
-    margin-left: -155px;
-    top: 100px;
+    margin-top: 20px;
+    position: relative;
 }
 
 #btn {
@@ -41,24 +60,25 @@ table {
     border-color: rgb(170, 170, 170);
     border-radius: 10px;
     min-width: 125px;
-    position: absolute;
-    top: 450px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .endgame {
     display: none;
-    width: 500px;
-    height: 310px;
-    top: 50px;
     position: absolute;
+    top: 56%;
     left: 50%;
-    margin-left: -250px;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    transform: translate(-50%, -50%);
     text-align: center;
-    border-radius: 1px;
     color: rgb(255, 255, 255);
     font-size: 2em;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    z-index: 1;
+    width: 80%;
+    max-width: 310px;
+    height: 60%;
+    max-height: 310px;
+    overflow: auto;
+    padding: 60px; /* Combine padding into a shorthand property */
+    box-sizing: border-box;
 }
